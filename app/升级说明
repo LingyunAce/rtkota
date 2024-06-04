@@ -1,0 +1,45 @@
+本地升级：
+case COMMAND_CHECK_LOCAL_UPDATING:
+ if (null != (searchResult = getValidFirmwareImageFile(IMAGE_FILE_DIRS))) {
+ //验证文件是否存在，以及升级包是否是有效的
+
+两个判断：
+1.if (path.endsWith("img")) {  //文件是否以 img为后缀
+2.f (zipValid(new File(path))) {  //再次校验zip并压缩
+
+以上为非ab 的ota校验过程，ab已经弃用
+
+不再使用的类
+1.UpdateAndRebootActivity  FirmwareUpdatingActivity 弃用
+
+需要弄清楚
+1.OtaUpdateNotifyActivity 提醒升级
+2.PackageDownloadActivity 下载升级包  
+	配置下载路径，下载完的回调？ 有回调直接通知升级或者等用户自己点击？
+	下载完成： HTTPFileDownloadTask.PROGRESS_DOWNLOAD_COMPLETE
+	
+3.服务器配置ota>>>检测ota升级>>>下载升级包>>>安装升级包>>>重启完成升级  ---流程已经跑通
+   问题：升级完还能检测到升级？	---对比系统版本和服务器版本就行了
+   U盘盘符在不同终端不一样 ，本机 storage/D89B-D78A/  ，测试用storge/*/ 能否代替
+   
+4.本地升级移植到RTKUpdateService   
+  问题：连续升级失败，例如01 02 03 版本，01先升级到02成功，再继续升级到03失败 
+  做以下测试： 刷02的固件，升到03，看是否能正常升级
+  ---刷02的固件，升到03，正常升级
+  ---重新刷机后，本地连续升级可以成功
+  ---重新刷机后，联网连续升级可以成功
+  
+  问题：联网升级后检测到本地升级？
+  需要把下载到本地的包删除  
+  代码设置在重启的时候删除/storage/emulated/0/update_signed.zip，该路径为本地存储根目录
+  
+  问题：本地升级实现的路径为本地存储根目录的检测升级，U盘路径能识别，但是U盘下面的包识别不了
+  分析为avc权限确实，更改了编译测试
+  
+5.U盘检测升级实现成功
+  问题：本地升级实现的路径为本地存储根目录的检测升级，U盘路径能识别，但是U盘下面的包识别不了
+  不是avc权限问题.
+  U盘根目录有两个路径：
+  1.mnt/media_rw/D89B-D78A/
+  2.storage/D89B-D78A/
+  路径1下的包无法识别，只有路径2的包能识别

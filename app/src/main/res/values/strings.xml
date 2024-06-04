@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">System Update</string> 
+  <!--  changed --> 
+  <string name="permlab_showUI">Show UI for firmware update.</string> 
+  <string name="permdesc_shwoUI">Show UI for firmware update.</string> 
+  <!--  Firmware updating dialog strings  --> 
+  <string name="updating_title">Firmware Updating</string> 
+  <string name="updating_message_formate">A update package file is found : \'%1$s\'. Would you like to install the package?</string> 
+  <string name="updating_button_install">Install</string> 
+  <string name="updating_button_cancel">Cancel</string> 
+  <string name="updating_prompt">Checking the package! The Device is going to reboot...</string> 
+  <string name="updating_prompt_sdcard">Do NOT remove SD card from the device!</string> 
+  <!--  changed --> 
+  <!--  Invalid Firmware Image Activity (IFIA)--> 
+  <string name="IFIA_title">Invalid firmware image</string> 
+  <string name="IFIA_msg">Found an invalid firmware image file \'%1$s\'. Would you like to delete it?</string> 
+  <!--  changed --> 
+  <string name="IFIA_btn_yes">Yes</string> 
+  <string name="IFIA_btn_no">No</string> 
+  <!--  No Image Activity (NIA)--> 
+  <string name="NIA_title">No update image file</string> 
+  <string name="NIA_msg_format">There is no firmware image file in directory \'%1$s\' and \'%2$s\'!</string> 
+  <string name="NIA_btn_ok">OK</string> 
+  <string name="ask_delete_package">Do you want to delete the file? If not,the system may propose this update again.</string> 
+  <string name="update_success">Congratulation upgrade succeed!</string> 
+  <!--  changed --> 
+  <string name="update_failed">Firmware update failed!</string> 
+  <!--  changed --> 
+  <string name="state_idle">State: Idle</string> 
+  <string name="downloading">Downloading</string> 
+  <string name="ota_update">Find a OTA upgrade package! do you want to update? </string> 
+  <string name="ota_package_size">, size:</string> 
+  <string name="start">Start</string> 
+  <string name="starting">Starting</string> 
+  <string name="retry">Retry</string> 
+  <string name="pause">Pause</string> 
+  <string name="stoping">Stoping</string> 
+  <string name="cancel_update">Cancel Download</string> 
+  <!--  changed --> 
+  <string name="auto_check">Auto check update</string> 
+  <string name="check_now">Check now</string> 
+
+	
+  <string name="pb_title_downloading">Upgrade package is being downloaded</string>
+  <string name="pb_title_pause">Upgrade package is being paused</string>
+  <string name="remain_time">Remaining Time:</string>
+  <string name="current_new">The current version is the latest!</string>
+  <string name="current_fail">The network is not connected!</string>
+  <string name="error_display">Network error, please try again later!</string>
+  <string name="product_model">Product Model:</string>
+  <string name="current_version">Current Version:</string>
+
+  <string name="sd_head">sdcard fstype is: </string>
+  <string name="usb_head">usb storage fstype is: </string>
+  <string name="fat_warn"> ,please format it to fat</string>
+  <string name="back">back</string>
+
+  <!--add-->
+  <string name="hide">Hide</string>
+  <string name="confirm">OK</string>
+  <string name="ok">OK</string>
+
+  <string name="upgrade_title">Upgrade</string>
+  <string name="upgrade_download">Download</string>
+  <string name="upgrade_ok">Upgrade</string>
+  <string name="upgrade_cancel">Cancel</string>
+  <string name="upgrade_message">"Found a new version, is it upgraded?\n"</string>
+  <string name="upgrade_success">Upgrade success!</string>
+  <string name="upgrade_failed">Upgrade failed!</string>
+  <string name="upgrade_prepare_install">Ready to install: </string>
+  <string name="upgrade_install_success">install success!</string>
+  <string name="upgrade_install_failed">install failed!</string>
+  <string name="upgrade_invalid_package">invalid package!</string>
+  <string name="upgrade_unknown_sources_package">To install the application, you need to open the permissions of unknown source. Please go to Settings to open the permissions!</string>
+  <string name="upgrade_smaller_version">Upgrade package versions less than or equal to the current system version will not be upgraded!</string>
+
+  <!--checkUpdate回调错误码-->
+  <string name="check_param_error">"param error!"</string>
+  <string name="check_net_error">"network error!"</string>
+  <string name="check_no_update">"no update!"</string>
+
+  <!--download回调错误码-->
+  <string name="download_param_error">"param error!"</string>
+  <string name="download_net_error">"network error!"</string>
+  <string name="download_no_space">"no space!"</string>
+  <string name="download_app_installed_error">"app installed!"</string>
+  <string name="download_app_not_install_error">"app not install!"</string>
+  <string name="download_low_version_error">"low version!"</string>
+  <string name="download_sha1_verify_error">"sha1 verify error!"</string>
+
+  <!--upgrade回调错误码-->
+  <string name="upgrade_param_error">"param error!"</string>
+  <string name="upgrade_sha1_verify_error">"sha1 verify error!"</string>
+  <string name="upgrade_sign_verify_error">"sign verify error!"</string>
+  <string name="upgrade_file_not_exist_error">"file not exist!"</string>
+  <string name="upgrade_not_installed_error">"not installed!"</string>
+  <string name="upgrade_install_error">"install error!"</string>
+  <string name="upgrade_uninstall_error">"uninstall error!"</string>
+  <string name="upgrade_custom_error">"custom error!"</string>
+  <string name="upgrade_user_not_confirm">"user not confirm!"</string>
+
+  <string name="upgrade_copy_file_title">"copy file to internalStorage"</string>
+  <string name="upgrade_sys_title">"Android system upgrade"</string>
+  <string name="upgrade_sys_success_and_need_reboot">"Android system upgrade successful! reboot to switch into new system!"</string>
+  <string name="upgrade_sys_error_reason_not_enough_space">"Android system upgrade failed: the device have not enough space"</string>
+  <string name="upgrade_sys_error_reason_timestamp_error">"Android system upgrade failed: the update zip have wrong timestamp, is it the latest version?"</string>
+  <string name="upgrade_sys_error_reason_size_mismatch_error">"Android system upgrade failed: the update zip have wrong size"</string>
+  <string name="upgrade_sys_error_reason_verification_error">"Android system upgrade failed: verification error"</string>
+  <string name="upgrade_sys_error_reason_other">"Android system upgrade failed: unknown error, please connect the supplier"</string>
+  <string name="upgrade_sys_error_reason_suffix">" error_code: "</string>
+
+  <string name="upgrade_sys_error_battery_is_not_enough">"not enough battery, for the safety of the system, needed at least %d%% battery for system upgrade"</string>
+</resources>

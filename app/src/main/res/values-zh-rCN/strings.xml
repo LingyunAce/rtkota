@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+	
+	<!-- Firmware updating dialog strings  -->
+	<string name="app_name">系统升级</string>
+	<string name="updating_title">固件升级</string>
+	<string name="updating_message_formate">发现一个升级包 : \'%1$s\'. 是否要安装升级包?</string>
+	<string name="updating_button_install">安装</string>
+	<string name="updating_button_cancel">放弃</string>
+	<string name="updating_prompt">设备将重启并升级固件, 请保证您的 USB 电缆或充电器是连接状态! </string>
+	<string name="updating_prompt_sdcard">请切勿将 SD 卡从设备中拔出. </string>
+
+	<!-- Invalid Firmware Image Activity (IFIA)-->
+	<string name="IFIA_title">无效的固件镜像. </string>
+	<string name="IFIA_msg">发现一个无效的固件镜像文件 \'%1$s\'. 是否需要删除它? </string>
+	<string name="IFIA_btn_yes">是</string>
+	<string name="IFIA_btn_no">否</string>
+
+	<!-- No Image Activity (NIA)-->
+	<string name="NIA_title">没有升级用镜像文件</string>
+	<string name="NIA_msg_format">在目录 \'%1$s\' 和 \'%2$s\' 中, 没有固件镜像文件. </string>
+    <string name="NIA_btn_ok">确定</string>
+
+
+	<string name="ask_delete_package">是否删除升级包？如果不删除，系统可能再次提示升级，可能会给您带来不便！</string>
+	<string name="update_success">恭喜升级成功!</string>
+	<string name="update_failed">对不起升级失败!</string>
+	<string name="downloading">下载中</string> 
+	<string name="ota_update">可以升级新版本! 确定要升级吗? </string>
+	<string name="ota_package_size">, 大小: </string>
+	
+	<string name="start">开始</string>
+	<string name="starting">正在开始</string>
+	<string name="retry">重试</string>
+	<string name="pause">暂停</string>
+	<string name="stoping">正在停止</string>
+	
+	<string name="cancel_update">取消下载</string>
+	<string name="auto_check">自动检查更新</string>
+	<string name="check_now">检查更新</string>
+	
+	<string name="pb_title_downloading">正在下载升级包</string>
+	<string name="pb_title_pause">升级包下载停止</string>
+  	<string name="remain_time">剩余时间:</string>
+  	<string name="current_new">当前版本已经是最新！</string>
+	<string name="current_fail">网络未连接!</string>
+  	<string name="error_display">网络错误，请稍后再试!</string>
+  	<string name="product_model">产品型号:</string>
+  	<string name="current_version">当前版本:</string>
+
+    <string name="sd_head">SD 卡的格式是: </string>
+    <string name="usb_head">U 盘的格式是: </string>
+    <string name="fat_warn"> ,请格式化成fat。</string>
+    <string name="back">返回</string>
+
+	<!--add-->
+	<string name="hide">"隐藏"</string>
+	<string name="confirm">"确认"</string>
+	<string name="ok">"确定"</string>
+
+	<string name="upgrade_title">"升级"</string>
+	<string name="upgrade_download">"下载"</string>
+	<string name="upgrade_ok">"立即升级"</string>
+	<string name="upgrade_cancel">"暂不升级"</string>
+	<string name="upgrade_message">"发现新版本，是否升级？\n"</string>
+	<string name="upgrade_success">"升级成功！"</string>
+	<string name="upgrade_failed">"升级失败！"</string>
+	<string name="upgrade_prepare_install">"准备安装："</string>
+	<string name="upgrade_install_success">"安装成功！"</string>
+	<string name="upgrade_install_failed">"安装失败！"</string>
+	<string name="upgrade_invalid_package">"验证失败！"</string>
+	<string name="upgrade_unknown_sources_package">"安装应用需要打开未知来源权限，请去设置中开启权限！"</string>
+	<string name="upgrade_smaller_version">"升级包版本小于等于当前系统版本，将不会被升级！"</string>
+
+	<!--checkUpdate回调错误码-->
+	<string name="check_param_error">"参数错误！"</string>
+	<string name="check_net_error">"网络错误！"</string>
+	<string name="check_no_update">"无更新！"</string>
+
+	<!--download回调错误码-->
+	<string name="download_param_error">"参数错误！"</string>
+	<string name="download_net_error">"网络错误！"</string>
+	<string name="download_no_space">"空间不足！"</string>
+	<string name="download_app_installed_error">"安装app，app已安装错误！"</string>
+	<string name="download_app_not_install_error">"更新app，app未安装错误！"</string>
+	<string name="download_low_version_error">"更新app，版本过低错误！"</string>
+	<string name="download_sha1_verify_error">"sha1校验失败！"</string>
+
+	<!--upgrade回调错误码-->
+	<string name="upgrade_param_error">"参数错误！"</string>
+	<string name="upgrade_sha1_verify_error">"sha1校验失败！"</string>
+	<string name="upgrade_sign_verify_error">"签名校验失败！"</string>
+	<string name="upgrade_file_not_exist_error">"文件不存在！"</string>
+	<string name="upgrade_not_installed_error">"卸载app，app未安装！"</string>
+	<string name="upgrade_install_error">"app安装错误！"</string>
+	<string name="upgrade_uninstall_error">"app卸载错误！"</string>
+	<string name="upgrade_custom_error">"安装自定义错误！"</string>
+	<string name="upgrade_user_not_confirm">"用户取消升级！"</string>
+
+	<string name="upgrade_copy_file_title">"拷贝文件到设备"</string>
+	<string name="upgrade_sys_title">"Android系统升级"</string>
+	<string name="upgrade_sys_success_and_need_reboot">"Android系统升级成功! 请重启设备以切换到最新系统!"</string>
+	<string name="upgrade_sys_error_reason_not_enough_space">"Android系统升级失败: 设备空间不足"</string>
+	<string name="upgrade_sys_error_reason_timestamp_error">"Android系统升级失败: 安装包时间戳异常，请确认是否是最新ROM?"</string>
+	<string name="upgrade_sys_error_reason_size_mismatch_error">"Android系统升级失败: 安装包文件大小异常"</string>
+	<string name="upgrade_sys_error_reason_verification_error">"Android系统升级失败: 安装包认证异常"</string>
+	<string name="upgrade_sys_error_reason_other">"Android系统升级失败: 未知异常，请联系供应商"</string>
+	<string name="upgrade_sys_error_reason_suffix">" 异常代码: "</string>
+
+	<string name="upgrade_sys_error_battery_is_not_enough">"设备电量不足，为了系统安全，系统升级时至少需要%d%%电量"</string>
+</resources>
