@@ -558,6 +558,9 @@ public class PackageDownloadActivity extends Activity {
 					if(mWakeLock.isHeld()){
 						mWakeLock.release();
 					}
+                    if (mBinder != null) {
+                        mBinder.unLockWorkHandler();
+                    }
 					
 					if(mIsCancelDownload) {
 						finish();
@@ -647,9 +650,9 @@ public class PackageDownloadActivity extends Activity {
 		clearNotification();
 		mNotifyManager = null;
 		
-		if(mBinder != null) {
-			mBinder.unLockWorkHandler();
-		}
+        //if (mBinder != null) {
+        //    mBinder.unLockWorkHandler();
+        //}
 		mContext.unbindService(mConnection);
 		super.onDestroy();
 	}
@@ -740,9 +743,12 @@ public class PackageDownloadActivity extends Activity {
     	return info;
     }
 
-	public void installSystem(final File file) {
-		installSystem("", file);
-	}
+    public void installSystem(final File file) {
+        installSystem("", file);
+        if (mBinder != null) {
+            mBinder.LockWorkHandler();
+        }
+    }
 
 	private void installSystem(final String pkgName, final File file) {
 		Log.i(TAG, "installSystem, pkgName=" + pkgName + " file=" + file.getPath());

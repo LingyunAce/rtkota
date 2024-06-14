@@ -642,8 +642,8 @@ public class RTKUpdateService extends Service {
                     } catch (Exception e) {
                         e.printStackTrace();
                         LOG("request remote server error...");
-                        myMakeToast(mContext.getString(R.string.current_fail));
-                    }
+                            myMakeToast(mContext.getString(R.string.current_new));
+                        }
 
                     try {
                         Thread.sleep(5000);
