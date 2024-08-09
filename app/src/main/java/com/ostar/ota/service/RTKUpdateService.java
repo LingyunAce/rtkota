@@ -682,7 +682,7 @@ public class RTKUpdateService extends Service {
         mLocalPackages.clear();
 
         // del last apps and ota package
-        File targetDir = new File(AppUtils.getExternalDir(mContext, "packages"));
+        /*File targetDir = new File(AppUtils.getExternalDir(mContext, "packages"));
         if (targetDir != null) {
             if (targetDir.isDirectory()) {
                 if (null != targetDir.listFiles()) {
@@ -693,7 +693,7 @@ public class RTKUpdateService extends Service {
             } else {
                 deletePackage_(targetDir);
             }
-        }
+        }*/
 
         // scan external dirs(root dirs and 2 depth child dirs)
         for (String root : mExternalDirs/*EXTERNAL_DIRS*/) {
@@ -848,7 +848,7 @@ public class RTKUpdateService extends Service {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         dialog.dismiss();
-                        mWorkHandleLocked = false;
+                        mWorkHandleLocked = true;
                     }
                 }).create();
         dialog.setCanceledOnTouchOutside(false);
