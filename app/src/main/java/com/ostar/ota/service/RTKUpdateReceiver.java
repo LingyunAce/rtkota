@@ -43,7 +43,7 @@ public class RTKUpdateReceiver extends BroadcastReceiver {
             serviceIntent.putExtra("command", RTKUpdateService.COMMAND_CHECK_LOCAL_UPDATING);
             serviceIntent.putExtra("delay", 20000);
             context.startService(serviceIntent);
-            deletePackage(new File("/storage/emulated/0/update_signed.zip"));
+            //deletePackage(new File("/storage/emulated/0/com.ostar.ota/packages/update_signed.zip"));
 
             isBootCompleted = true;
         } else if (action.equals(Intent.ACTION_MEDIA_MOUNTED) && isBootCompleted) {
@@ -82,7 +82,7 @@ public class RTKUpdateReceiver extends BroadcastReceiver {
             }
         }else if (action.equals("android.del.otapac")) {
             Log.e(TAG,"--------------DEL PAC-----------------");
-            deletePackage(new File("/storage/emulated/0/update_signed.zip"));
+            //deletePackage(new File("/storage/emulated/0/update_signed.zip"));
         }
     }
 

@@ -72,8 +72,10 @@
 	<!--add-->
 	<string name="hide">"隐藏"</string>
 	<string name="confirm">"确认"</string>
+	<string name="confirm_boot">"立即重启"</string>
+	<string name="confirm_notboot">"稍后手动重启"</string>
 	<string name="ok">"确定"</string>
-
+	<string name="no">"取消"</string>
 	<string name="upgrade_title">"升级"</string>
 	<string name="upgrade_download">"下载"</string>
 	<string name="upgrade_ok">"立即升级"</string>
@@ -124,4 +126,6 @@
 	<string name="upgrade_sys_error_reason_suffix">" 异常代码: "</string>
 
 	<string name="upgrade_sys_error_battery_is_not_enough">"设备电量不足，为了系统安全，系统升级时至少需要%d%%电量"</string>
+	<string name="delete_pac">"是否删除U盘下的升级包"</string>
+	<string name="pac_is_old">"这个升级包已经过时，请用新的升级包升级"</string>
 </resources>

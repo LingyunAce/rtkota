@@ -1,6 +1,7 @@
 package com.ostar.ota.service;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -831,40 +832,78 @@ public class PackageDownloadActivity extends Activity {
 		dialog.show();
 	}
 
-	private void showInstallSystemSuccess() {
-		Log.d(TAG, "showInstallSystemSuccess");
+    private void showInstallSystemSuccess() {
+        Log.d(TAG, "showInstallSystemSuccess");
+        deletePackage_(new File("/storage/emulated/0/update_signed.zip"));
+        /*if (mDialogSysUpdateSuccess != null) {
+            if (mDialogSysUpdateSuccess.isShowing()) {
+                mDialogSysUpdateSuccess.dismiss();
+            }
 
-		if (mDialogSysUpdateSuccess != null) {
-			if (mDialogSysUpdateSuccess.isShowing()) {
-				mDialogSysUpdateSuccess.dismiss();
-			}
+            mDialogSysUpdateSuccess.setTitle(getResources().getString(R.string.upgrade_sys_title));
+            mDialogSysUpdateSuccess.setMessage(getResources().getString(R.string.upgrade_sys_success_and_need_reboot));
+            mDialogSysUpdateSuccess.show();
 
-			mDialogSysUpdateSuccess.setTitle(getResources().getString(R.string.upgrade_sys_title));
-			mDialogSysUpdateSuccess.setMessage(getResources().getString(R.string.upgrade_sys_success_and_need_reboot));
-			mDialogSysUpdateSuccess.show();
+            if (mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE) != null) {
+                mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm));
+            }
+        }*/
+        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
+                .setTitle(R.string.upgrade_sys_title)
+                .setMessage(R.string.upgrade_sys_success_and_need_reboot)
+                .setPositiveButton(R.string.confirm_boot, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dialog.dismiss();
+                        SystemUpdateManager mSystemUpdateManager = null;
+                        try {
+                            mSystemUpdateManager = new SystemUpdateManager(mContext);
+                            mSystemUpdateManager.rebootNow(mContext);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.confirm_notboot, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
 
-			if (mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE) != null) {
-				mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm));
-			}
-		}
-	}
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialog.show();
+    }
 
-	private void showInstallSystemFail(String reason) {
-		Log.d(TAG, "showInstallSystemFail reason=" + reason);
+    private void showInstallSystemFail(String reason) {
+        Log.d(TAG, "showInstallSystemFail reason=" + reason);
 
-		if (mDialogSysUpdateFail != null) {
-			if (mDialogSysUpdateFail.isShowing()) {
-				mDialogSysUpdateFail.dismiss();
-			}
+        if (mDialogSysUpdateFail != null) {
+            if (mDialogSysUpdateFail.isShowing()) {
+                mDialogSysUpdateFail.dismiss();
+            }
 
-			mDialogSysUpdateFail.setTitle(getResources().getString(R.string.upgrade_sys_title));
-			mDialogSysUpdateFail.setMessage(reason);
-			mDialogSysUpdateFail.show();
+            mDialogSysUpdateFail.setTitle(getResources().getString(R.string.upgrade_sys_title));
+            mDialogSysUpdateFail.setMessage(reason);
+            mDialogSysUpdateFail.show();
 
-			if (mDialogSysUpdateFail.getButton(DialogInterface.BUTTON_POSITIVE) != null) {
-				mDialogSysUpdateFail.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm));
-			}
-		}
+            if (mDialogSysUpdateFail.getButton(DialogInterface.BUTTON_POSITIVE) != null) {
+                mDialogSysUpdateFail.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm));
+            }
+        }
 
-	}
+    }
+
+    private void deletePackage_(File file) {
+        if (file.exists()) {
+            boolean isDelete = file.delete();
+            if (isDelete) {
+                Log.e(TAG, "--------------DEL PAC IS SUCCESS-----------------");
+            } else {
+                Log.e(TAG, "--------------DEL PAC IS FAILED-----------------");
+            }
+        }
+    }
 }

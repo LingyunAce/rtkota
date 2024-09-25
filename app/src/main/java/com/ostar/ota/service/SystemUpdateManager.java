@@ -1,6 +1,7 @@
 package com.ostar.ota.service;
 
 import android.content.Context;
+import android.os.PowerManager;
 import android.os.UpdateEngine;
 import android.os.UpdateEngineCallback;
 import android.util.Log;
@@ -26,7 +27,7 @@ public class SystemUpdateManager {
 
 			switch (status) {
 				case UpdateEngine.UpdateStatusConstants.UPDATED_NEED_REBOOT:
-					rebootNow();
+					//rebootNow();
 					break;
 				case UpdateEngine.UpdateStatusConstants.DOWNLOADING:
 					//mProgressBar.setProgress((int) (percent * 100));
@@ -67,10 +68,10 @@ public class SystemUpdateManager {
 	/**
 	 * Reboot the system.
 	 */
-	private void rebootNow() {
+	public void rebootNow(Context context) {
 		Log.e(TAG, "rebootNow");
 
-		//PowerManager pManager=(PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-		//pManager.reboot("reboot-ab-update");
+		PowerManager pManager=(PowerManager) context.getSystemService(Context.POWER_SERVICE);
+		pManager.reboot("reboot-ab-update");
 	}
 }

@@ -1,11 +1,15 @@
 package com.ostar.ota.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -153,6 +157,7 @@ public class RTKUpdateService extends Service {
     private ProgressDialog mUpdateSysProgressDialog;
     private AlertDialog mDialogSysUpdateSuccess, mDialogSysUpdateFail;
 
+    private static String OTAFILE = "";
     @Override
     public IBinder onBind(Intent arg0) {
         LOG("mBinder is start");
@@ -256,7 +261,6 @@ public class RTKUpdateService extends Service {
         File appDirectory = new File(externalStorageDir.getPath() + "/Android/data/" + packageName + "/");
         String appPath = appDirectory.getPath();
         LOG("appPath = " + appPath);
-        LOG("----------------------------------------------------------------22222");
 
         String ota_packagename = getOtaPackageFileName();
         if (ota_packagename != null) {
@@ -266,8 +270,10 @@ public class RTKUpdateService extends Service {
 
         try {
             mRemoteURI = new URI(getRemoteUri());
+            mRemoteURIBackup = new URI(getRemoteUriBackup());
             //mRemoteURIBackup = new URI("http://192.168.1.219:2306/OtaUpdater/android?product=jade&version=1.0.3&sn=unknown&country=CN&language=zh");//new URI(getRemoteUriBackup());
             LOG("remote uri is " + mRemoteURI.toString());
+            LOG("remote_backup uri is " + mRemoteURIBackup.toString());
             //LOG("remote uri backup is " + mRemoteURIBackup.toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -344,7 +350,8 @@ public class RTKUpdateService extends Service {
                         showUpgradeFailed();
                         break;
                     case MSG_SYS_UPDATE_SUCCESS:
-                        showInstallSystemSuccess();
+                        //showInstallSystemSuccess();
+                        deleteSdcardOtaPackage();
                         break;
                     case MSG_SYS_UPDATE_FAIL:
                         showInstallSystemFail((String) msg.obj);
@@ -449,6 +456,14 @@ public class RTKUpdateService extends Service {
                     Message msg = new Message();
                     msg.what = MSG_SYS_UPDATE_SUCCESS;
                     mMainHandler.sendMessage(msg);
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            long otaTimestamp = getOtaTimestamp(OTAFILE);
+                            SystemPropertiesProxy.set(mContext, "persist.sys.otatimestamp", String.valueOf(otaTimestamp));
+                        }
+                    }).start();
 
                 } else {
                     String reason = "";
@@ -573,7 +588,8 @@ public class RTKUpdateService extends Service {
 
         if (command == COMMAND_CHECK_REMOTE_UPDATING_BY_HAND) {
             mIsOtaCheckByHand = true;
-            command = COMMAND_CHECK_REMOTE_UPDATING;
+            mWorkHandleLocked = false;
+            command = COMMAND_CHECK_LOCAL_UPDATING;
         }
 
         if (mIsNeedDeletePackage) {
@@ -796,13 +812,13 @@ public class RTKUpdateService extends Service {
     }
 
     private void deletePackage_(File file) {
-        boolean isDelete = file.delete();
-        if (isDelete) {
-            LOG("file is delete");
-            LOG("deletePackage, path=" + file.getAbsolutePath());
-        } else {
-            LOG("file is not delete");
-            LOG("deletePackage, path=" + file.getAbsolutePath());
+        if (file.exists()) {
+            boolean isDelete = file.delete();
+            if (isDelete) {
+                Log.e(TAG, "--------------DEL PAC IS SUCCESS-----------------");
+            } else {
+                Log.e(TAG, "--------------DEL PAC IS FAILED-----------------");
+            }
         }
     }
 
@@ -817,6 +833,7 @@ public class RTKUpdateService extends Service {
 
             if (otaFile.exists()) {
                 mLocalPackages.add(new LocalPackage(LocalPackage.TYPE_ROM, otaFile));
+                OTAFILE = otaFile.getAbsolutePath();
             } else {
                 Log.i(TAG, "loadOtaPackage, otaFile: " + otaFile.getAbsolutePath() + " do not exist!");
             }
@@ -840,15 +857,34 @@ public class RTKUpdateService extends Service {
                 .setPositiveButton(R.string.upgrade_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                long otaTimestampNew = getOtaTimestamp(OTAFILE);
+                                long otaTimestampOld = 0L;
+                                String otaTimestampOldStr = SystemPropertiesProxy.get(mContext, "persist.sys.otatimestamp");
+                                if (otaTimestampOldStr != null && !otaTimestampOldStr.equals("")) {
+                                    otaTimestampOld = Long.parseLong(otaTimestampOldStr);
+                                }
+                                if (otaTimestampNew > otaTimestampOld) {
+                                    installLocalNext();
+                                } else {
+                                    Looper.prepare();
+                                    //Toast.makeText(mContext,R.string.pac_is_old,Toast.LENGTH_LONG).show();
+                                    showIsOldPac();
+                                    Looper.loop();
+                                }
+                            }
+                        }).start();
                         dialog.dismiss();
-                        installLocalNext();
                     }
                 })
                 .setNegativeButton(R.string.upgrade_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         dialog.dismiss();
-                        mWorkHandleLocked = true;
+                        //mWorkHandleLocked = true;
                     }
                 }).create();
         dialog.setCanceledOnTouchOutside(false);
@@ -991,15 +1027,28 @@ public class RTKUpdateService extends Service {
     }
 
     private void showUpgradeSuccess() {
-        Dialog dialog = new AlertDialog.Builder(getApplicationContext())
+        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
                 .setTitle(R.string.upgrade_title)
                 .setMessage(R.string.upgrade_success)
-                .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.confirm_boot, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dialog.dismiss();
+                        try {
+                            SystemUpdateManager mSystemUpdateManager = new SystemUpdateManager(mContext);
+                            mSystemUpdateManager.rebootNow(mContext);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.confirm_notboot, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 }).create();
+
         dialog.setCanceledOnTouchOutside(false);
         dialog.setCancelable(false);
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
@@ -1022,10 +1071,35 @@ public class RTKUpdateService extends Service {
         dialog.show();
     }
 
+    private void deleteSdcardOtaPackage() {
+        Log.d(TAG, "-----------deleteSdcardOtaPackage");
+        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
+                .setTitle(R.string.delete_pac)
+                .setMessage("")
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deletePackage_(new File(OTAFILE));
+                        deletePackage_(new File("/storage/emulated/0/com.ostar.ota/packages/update_signed.zip"));
+                        showInstallSystemSuccess();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showInstallSystemSuccess();
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialog.show();
+    }
     private void showInstallSystemSuccess() {
         Log.d(TAG, "showInstallSystemSuccess");
-
-        if (mDialogSysUpdateSuccess != null) {
+        /*if (mDialogSysUpdateSuccess != null) {
             if (mDialogSysUpdateSuccess.isShowing()) {
                 mDialogSysUpdateSuccess.dismiss();
             }
@@ -1035,10 +1109,43 @@ public class RTKUpdateService extends Service {
             mDialogSysUpdateSuccess.show();
 
             if (mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE) != null) {
-                mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm));
+                mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm_boot));
+                PowerManager pManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                //pManager.reboot(null);
+                pManager.reboot("reboot-ab-update");
             }
+            if(mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_NEGATIVE) != null){
+                mDialogSysUpdateSuccess.getButton(DialogInterface.BUTTON_POSITIVE).setText(getResources().getString(R.string.confirm_notboot));
+            }
+        }*/
 
-        }
+        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
+                .setTitle(R.string.upgrade_sys_title)
+                .setMessage(R.string.upgrade_sys_success_and_need_reboot)
+                .setPositiveButton(R.string.confirm_boot, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //dialog.dismiss();
+                        SystemUpdateManager mSystemUpdateManager = null;
+                        try {
+                            mSystemUpdateManager = new SystemUpdateManager(mContext);
+                            mSystemUpdateManager.rebootNow(mContext);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.confirm_notboot, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialog.show();
     }
 
     private void showInstallSystemFail(String reason) {
@@ -1233,6 +1340,7 @@ public class RTKUpdateService extends Service {
     }
 
     private void myMakeToast(CharSequence msg) {
+        Log.e(TAG, "------------mIsOtaCheckByHand= " + mIsOtaCheckByHand);
         if (mIsOtaCheckByHand) {
             makeToast(msg);
         }
@@ -1356,5 +1464,38 @@ public class RTKUpdateService extends Service {
             Log.e("VersionInfo", "Exception", e);
         }
         return versionName;
+    }
+
+    public static long getOtaTimestamp(String otaFilePath) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(otaFilePath))))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("post-timestamp=")) {
+                    String timestampStr = line.split("=")[1];
+                    Log.e(TAG, "----------timestampStr= " + timestampStr);
+                    return Long.parseLong(timestampStr);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return -1; // 未找到时间戳
+    }
+
+    private void showIsOldPac() {
+        Log.d(TAG, "-----------pac is old");
+        AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
+                .setTitle(R.string.pac_is_old)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+
+        //dialog.setCanceledOnTouchOutside(false);
+        //dialog.setCancelable(false);
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialog.show();
     }
 }

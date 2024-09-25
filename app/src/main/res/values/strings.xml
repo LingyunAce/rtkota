@@ -58,7 +58,10 @@
   <!--add-->
   <string name="hide">Hide</string>
   <string name="confirm">OK</string>
+  <string name="confirm_boot">Reboot immediately</string>
+  <string name="confirm_notboot">"Manually restart later"</string>
   <string name="ok">OK</string>
+  <string name="no">NO</string>
 
   <string name="upgrade_title">Upgrade</string>
   <string name="upgrade_download">Download</string>
@@ -110,4 +113,6 @@
   <string name="upgrade_sys_error_reason_suffix">" error_code: "</string>
 
   <string name="upgrade_sys_error_battery_is_not_enough">"not enough battery, for the safety of the system, needed at least %d%% battery for system upgrade"</string>
+  <string name="delete_pac">"Delete upgrade package"</string>
+  <string name="pac_is_old">"This upgrade pack is outdated, please upgrade with a new one."</string>
 </resources>
