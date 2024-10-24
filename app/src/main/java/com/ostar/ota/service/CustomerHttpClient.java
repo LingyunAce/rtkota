@@ -28,15 +28,12 @@ public class CustomerHttpClient {
     private CustomerHttpClient() {
     }
  
-    public static synchronized HttpClient getHttpClient() {
+    public static synchronized HttpClient getHttpClient() { 
     	if (null == customerHttpClient) {
-		Log.d("RKUpdateService","------------34-------------");
 		
 		if( new BasicHttpParams() != null){
-			Log.d("RKUpdateService","------------36-------------");
 		}
     		HttpParams params = new BasicHttpParams();
-		Log.d("RKUpdateService","------------39-------------");
             // 设置一些基本参数
             HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
             HttpProtocolParams.setContentCharset(params, CHARSET);

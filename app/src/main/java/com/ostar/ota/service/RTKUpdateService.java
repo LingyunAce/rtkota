@@ -68,7 +68,6 @@ public class RTKUpdateService extends Service {
     private static final String TAG = "ABotaTest";
     private static final boolean DEBUG = true;
     private static final boolean mIsNotifyDialog = true;
-    private static final boolean mIsSupportUsbUpdate = true;
 
     private static Context mContext;
     private volatile boolean mIsFirstStartUp = true;
@@ -145,7 +144,6 @@ public class RTKUpdateService extends Service {
     private static final int MSG_APP_UPDATE_FAIL = 3002;
     private static final int MSG_SYS_UPDATE_SUCCESS = 3003;
     private static final int MSG_SYS_UPDATE_FAIL = 3004;
-    private BatteryManager mBatteryManager;
     private StorageManager mStorageManager;
     private PowerManager mPowerManager = null;
     private PowerManager.WakeLock copyWakeLock = null;
@@ -158,6 +156,7 @@ public class RTKUpdateService extends Service {
     private AlertDialog mDialogSysUpdateSuccess, mDialogSysUpdateFail;
 
     private static String OTAFILE = "";
+
     @Override
     public IBinder onBind(Intent arg0) {
         LOG("mBinder is start");
@@ -247,7 +246,6 @@ public class RTKUpdateService extends Service {
             FLASH_ROOT = DATA_ROOT;
         }
 
-        mBatteryManager = (BatteryManager) mContext.getSystemService(Context.BATTERY_SERVICE);
         mPowerManager = mContext.getSystemService(PowerManager.class);
         copyWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "copyWakeLock");
         appUpdateWakeLock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "appUpdateWakeLock");
@@ -579,7 +577,7 @@ public class RTKUpdateService extends Service {
         }
 
         if (command == COMMAND_CHECK_REMOTE_UPDATING) {
-            mIsOtaCheckByHand = false;
+            //mIsOtaCheckByHand = false;
             if (!mAutoCheckSet.getBoolean("auto_check", true)) {
                 LOG("user set not auto check!");
                 return Service.START_NOT_STICKY;
@@ -641,32 +639,41 @@ public class RTKUpdateService extends Service {
                         return;
                     }
 
-                    try {
-                        boolean result;
-                        mUseBackupHost = false;
-                        result = requestRemoteServerForUpdate(mRemoteURI);
-                        LOG("----------471 result= " + result);
-
-                        if (result) {
-                            LOG("find a remote update package, now start PackageDownloadActivity...");
-                            //提示有可用的更新包
-                            startNotifyActivity();
-                        } else {
-                            LOG("no find remote update package...");
+                    for (int i = 0; i < 2; i++) {
+                        try {
+                            boolean result;
+                            if (i == 0) {
+                                mUseBackupHost = false;
+                                result = requestRemoteServerForUpdate(mRemoteURI);
+                                LOG("----------635 result= " + result);
+                            } else {
+                                mUseBackupHost = true;
+                                result = requestRemoteServerForUpdate(mRemoteURIBackup);
+                                LOG("----------639 result= " + result);
+                            }
+                            if (result) {
+                                LOG("find a remote update package, now start PackageDownloadActivity...");
+                                //提示有可用的更新包
+                                startNotifyActivity();
+                            } else {
+                                LOG("no find remote update package...");
+                                myMakeToast(mContext.getString(R.string.current_new));
+                                mIsOtaCheckByHand = false;
+                            }
+                            break;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            LOG("request remote server error...");
                             myMakeToast(mContext.getString(R.string.current_new));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        LOG("request remote server error...");
-                            myMakeToast(mContext.getString(R.string.current_new));
+                            mIsOtaCheckByHand = false;
                         }
 
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-
                     break;
                 case COMMAND_DELETE_UPDATEPACKAGE:
                     // if mIsNeedDeletePackage == true delete the package
@@ -683,7 +690,6 @@ public class RTKUpdateService extends Service {
                         mIsNeedDeletePackage = false;
                         mWorkHandleLocked = false;
                     }
-
                     break;
                 default:
                     break;
@@ -781,8 +787,7 @@ public class RTKUpdateService extends Service {
             Class storeManagerClazz = Class.forName("android.os.storage.StorageManager");
             Method getVolumesMethod = storeManagerClazz.getMethod("getVolumes");
 
-            List<VolumeInfo> list = (List<VolumeInfo>) getVolumesMethod.invoke(mStorageManager);/*mStorageManager.getVolumes()*/
-            ;
+            List<VolumeInfo> list = (List<VolumeInfo>) getVolumesMethod.invoke(mStorageManager);
             for (VolumeInfo item : list) {
                 if (item.getType() == VolumeInfo.TYPE_PUBLIC) {
                     Log.i(TAG, "TYPE_PUBLIC volumeInfo item=" + item.getPath() + ", internalPath=" + item.getInternalPath());
@@ -1097,6 +1102,7 @@ public class RTKUpdateService extends Service {
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         dialog.show();
     }
+
     private void showInstallSystemSuccess() {
         Log.d(TAG, "showInstallSystemSuccess");
         /*if (mDialogSysUpdateSuccess != null) {
@@ -1222,7 +1228,7 @@ public class RTKUpdateService extends Service {
     private void startCheckRemoteUpdate() {
         Intent serviceIntent = new Intent(this, RTKUpdateService.class);
         serviceIntent.putExtra("command", RTKUpdateService.COMMAND_CHECK_REMOTE_UPDATING);
-        serviceIntent.putExtra("delay", 15000);
+        serviceIntent.putExtra("delay", 4000);
         startService(serviceIntent);
 
         mContext.startService(serviceIntent);
@@ -1289,7 +1295,7 @@ public class RTKUpdateService extends Service {
         String remoteHost = SystemPropertiesProxy.get(mContext, "ro.product.ota.host");
         if (remoteHost == null || remoteHost.length() == 0) {
             //remoteHost = "172.16.14.202:2300";
-            remoteHost = "192.168.1.219:2306";
+            remoteHost = "otartk.ostar-display.cn:2306";
         }
         return remoteHost;
     }

@@ -17,7 +17,7 @@
 
 package com.ostar.ota.service;
 
-import android.content.Context;
+import android.content.Context; 
 import android.content.Intent;
 import android.content.BroadcastReceiver;
 import android.net.ConnectivityManager;
@@ -40,10 +40,9 @@ public class RTKUpdateReceiver extends BroadcastReceiver {
         if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d(TAG, "RKUpdateReceiver recv ACTION_BOOT_COMPLETED.");
             serviceIntent = new Intent(context, RTKUpdateService.class);
-            serviceIntent.putExtra("command", RTKUpdateService.COMMAND_CHECK_LOCAL_UPDATING);
+            serviceIntent.putExtra("command", RTKUpdateService.COMMAND_CHECK_REMOTE_UPDATING);
             serviceIntent.putExtra("delay", 20000);
             context.startService(serviceIntent);
-            //deletePackage(new File("/storage/emulated/0/com.ostar.ota/packages/update_signed.zip"));
 
             isBootCompleted = true;
         } else if (action.equals(Intent.ACTION_MEDIA_MOUNTED) && isBootCompleted) {
@@ -82,7 +81,6 @@ public class RTKUpdateReceiver extends BroadcastReceiver {
             }
         }else if (action.equals("android.del.otapac")) {
             Log.e(TAG,"--------------DEL PAC-----------------");
-            //deletePackage(new File("/storage/emulated/0/update_signed.zip"));
         }
     }
 

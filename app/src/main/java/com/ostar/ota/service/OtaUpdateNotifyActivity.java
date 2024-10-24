@@ -83,7 +83,6 @@ public class OtaUpdateNotifyActivity extends Activity {
         
         Button btn_ok = (Button)this.findViewById(R.id.button_ok);
 
-		//ªÒ»°Ωπµ„
 		btn_ok.setFocusable(true);
 		btn_ok.requestFocus();
 		btn_ok.setFocusableInTouchMode(true);

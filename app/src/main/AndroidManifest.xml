@@ -6,27 +6,30 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.REBOOT"
-        tools:ignore="ProtectedPermissions"></uses-permission>
+        tools:ignore="ProtectedPermissions"/>
     <uses-permission
         android:name="android.permission.RECOVERY"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.ACCESS_CACHE_FILESYSTEM"
-        tools:ignore="ProtectedPermissions"></uses-permission>
+        tools:ignore="ProtectedPermissions"/>
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_MEDIA_STORAGE"
-        tools:ignore="ProtectedPermissions"></uses-permission>
+        tools:ignore="ProtectedPermissions"/>
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission
         android:name="android.permission.ACCESS_MTP"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
 
     <application
         android:allowBackup="true"
@@ -91,19 +94,22 @@
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:multiprocess="false"
-            android:theme="@android:style/Theme.Holo.Dialog"></activity>
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
 
         <activity
             android:name=".service.NotifyDeleteActivity"
             android:excludeFromRecents="true"
             android:multiprocess="false"
-            android:theme="@android:style/Theme.Holo.Dialog"></activity>
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
 
         <activity
             android:name=".service.OtaUpdateNotifyActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Holo.Dialog"></activity>
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
 
         <activity
             android:name=".service.Setting"
@@ -117,7 +123,7 @@
                 <action android:name="android.intent.action.ROM_SYSTEM_OTA" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
     </application>
